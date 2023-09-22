@@ -3,11 +3,14 @@ from random import sample
 import settings
 import ctypes
 import sys
+import os
 
 class Cell:
     all = []
     cell_label_object = None
+    mine_label_object= None
     cell_count = settings.CELL_COUNT
+    mine_count = settings.MINES_COUNT
     
     def __init__(self, x, y, is_mine=False):
         self.is_mine = is_mine
@@ -21,8 +24,12 @@ class Cell:
         btn = Button(
             location,
             image=settings.idle,
-            width=24,
-            height=24
+            width=23.5,
+            height=23.5,
+            
+            # text=f'{self.x}, {self.y}',
+            # width=3,
+            # height=1
         )
         btn.bind('<Button-1>', self.left_click_actions)
         btn.bind('<Button-3>', self.right_click_actions)
@@ -89,9 +96,11 @@ class Cell:
         self.is_opened = True
         
     def show_mine(self):
-        self.cell_btn_object.config(image=settings.mine)
-        ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over', 0)
-        sys.exit()
+        for cell in Cell.all:
+            if cell.is_mine:
+                cell.cell_btn_object.configure(image=settings.mine)
+        if Cell.mine_label_object:
+            Cell.mine_label_object.config(text=f'Mines left: {Cell.mine_count - 1}')
         
     def left_click_actions(self, event):
         if not self.is_mine_candidate:
@@ -123,7 +132,7 @@ class Cell:
             if cell.surrounded_mines_count == 0 and not cell.is_mine and not cell.is_opened:
                 cell.is_mine_candidate = False
                 cell.cell_btn_object.config(image=settings.smile)
-                break
+                return cell
     
     @staticmethod
     def create_cell_label_object(location):
@@ -131,10 +140,21 @@ class Cell:
             location,
             bg='#4d4d4d',
             fg='white',
-            font=('', 30),
+            font=('', 20),
             text = f'Cells left: {Cell.cell_count}'
         )
         Cell.cell_label_object = label
+    
+    @staticmethod
+    def create_mine_label_object(location):
+        label = Label(
+            location,
+            bg='#4d4d4d',
+            fg='white',
+            font=('', 20),
+            text = f'Cells left: {Cell.mine_count}'
+        )
+        Cell.mine_label_object = label
     
     @staticmethod
     def randomize_mines():
@@ -144,6 +164,10 @@ class Cell:
         )
         for mine in picked_mines:
             mine.is_mine = True
+        # for cell in Cell.all:
+        #     if (cell.x, cell.y) in settings.MINES:
+        #         cell.is_mine = True
+                
     
     def __repr__(self):
-        return f'Cell({self.x}, {self.y})'
+        return f'({self.x}, {self.y})'
