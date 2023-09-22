@@ -9,7 +9,7 @@ BOARD_HEIGHT = HEIGHT * 90 / 100
 GRID_SIZE = 20
 CELL_COUNT = GRID_SIZE ** 2
 CELL_SIZE = 30
-MINES_COUNT = GRID_SIZE ** 2 // 4
+MINES_COUNT = GRID_SIZE ** 2 // 6
 
 changed = ImageTk.PhotoImage((Image.open('./images/changed.png')).resize((CELL_SIZE, CELL_SIZE)))
 flag = ImageTk.PhotoImage((Image.open('./images/flag.png')).resize((CELL_SIZE, CELL_SIZE)))
@@ -26,6 +26,16 @@ cell6 = ImageTk.PhotoImage((Image.open('./images/6.png')).resize((CELL_SIZE, CEL
 cell7 = ImageTk.PhotoImage((Image.open('./images/7.png')).resize((CELL_SIZE, CELL_SIZE)))
 cell8 = ImageTk.PhotoImage((Image.open('./images/8.png')).resize((CELL_SIZE, CELL_SIZE)))
 
-
+MINES = [
+    (8, 2),
+    (5, 1),
+    (5, 2),
+    (7, 3),
+    (7, 8),
+    (0, 8),
+    (0, 5),
+    (0, 4),
+    (3, 1)
+]
 
 
