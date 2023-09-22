@@ -3,6 +3,7 @@ from tkinter import *
 root = Tk()
 
 from cell import Cell
+import computer
 import settings
 import utilities
 
@@ -27,15 +28,6 @@ center_frame = Frame(
 )
 center_frame.place(x=utilities.width_prct(8.5), y=utilities.height_prct(14))
 
-for x in range(settings.GRID_SIZE):
-    for y in range(settings.GRID_SIZE):
-        c = Cell(x, y)
-        c.create_btn_object(center_frame)
-        c.cell_btn_object.grid(
-            column=x,
-            row=y
-        )
-
 hint = Button(
     top_frame,
     text='Hint',
@@ -46,8 +38,31 @@ hint = Button(
 hint.bind('<Button-1>', Cell.random_safe_cell)
 hint.place(x=50, y=27)
 
+minesweeperAI = computer.AI()
+
+ai_move = Button(
+    top_frame,
+    text='AI move',
+    width=7,
+    height=1,
+)
+ai_move.bind('<Button-1>', minesweeperAI.make_move)
+ai_move.place(x=600,y=27)
+
+for x in range(settings.GRID_SIZE):
+    for y in range(settings.GRID_SIZE):
+        c = Cell(x, y)
+        c.create_btn_object(center_frame)
+        c.cell_btn_object.grid(
+            column=x,
+            row=y
+        )
+        
 Cell.create_cell_label_object(top_frame)
-Cell.cell_label_object.place(x=240, y=15)
+Cell.cell_label_object.place(x=170, y=20)
+Cell.create_mine_label_object(top_frame)
+Cell.mine_label_object.place(x=370, y=20)
 Cell.randomize_mines()
+
 
 root.mainloop()
