@@ -1,7 +1,6 @@
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
 
-
 WIDTH = 720
 HEIGHT = 720
 BOARD_WIDTH = WIDTH * 90 / 100
@@ -25,17 +24,5 @@ cell5 = ImageTk.PhotoImage((Image.open('./images/5.png')).resize((CELL_SIZE, CEL
 cell6 = ImageTk.PhotoImage((Image.open('./images/6.png')).resize((CELL_SIZE, CELL_SIZE)))
 cell7 = ImageTk.PhotoImage((Image.open('./images/7.png')).resize((CELL_SIZE, CELL_SIZE)))
 cell8 = ImageTk.PhotoImage((Image.open('./images/8.png')).resize((CELL_SIZE, CELL_SIZE)))
-
-MINES = [
-    (8, 2),
-    (5, 1),
-    (5, 2),
-    (7, 3),
-    (7, 8),
-    (0, 8),
-    (0, 5),
-    (0, 4),
-    (3, 1)
-]
 
 
