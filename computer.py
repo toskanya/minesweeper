@@ -38,13 +38,18 @@ class Sentence:
             pass
 
 class AI:
-    def __init__(self):
+    def __init__(self, game):
         # safes and mines which the AI discover
         self.safes = set()
         self.mines = set()
         
+        # move made and first move made
         self.moves_made = set()
-        
+        self.first_move_made = False
+
+        self.loop = False
+        self.finish = False
+        self.game = game
         # knowledge base where the AI know if:
         # - the cells surrounding a cell
         # - the mine number of the cell
@@ -139,42 +144,59 @@ class AI:
                     if safes:
                         for safe in safes.copy():
                             self.mark_safe(safe)
-                    
+    
+    # make save moves base on the substraction of safes set and moved sets
     def make_safe_move(self):
         for chose_cell in self.safe_move:
-            print('Safe Move: ', end='')
-            return chose_cell
-        return None
+            return chose_cell, 'Safe Move: '
+        return None, 'Safe Move: '
     
+    # make random moves base on the current knowledge
     def make_random_move(self):
         for sentence in self.knowledge:
             if sentence.mine_count != len(sentence.cells):
                 cells = list(sentence.cells - self.moves_made)
                 random.shuffle(cells)
                 for chose_cell in cells:
-                    print('Random Move: ', end='')
-                    return chose_cell
-        return None
+                    return chose_cell, 'Random Move: '
+        return None, 'Random Move: '
+    
+    # make first move
+    def make_first_move(self):
+        if not self.first_move_made:
+            self.first_move_made = True
+            return Cell.random_safe_cell(None), 'First Move: '
+        return None, 'First Move: '
         
     def make_move(self, event):
-        # get the move cell
-        move_cell = self.make_safe_move()
-        if not move_cell:
-            if self.knowledge:
-                move_cell = self.make_random_move()
-            else:
-                move_cell = Cell.random_safe_cell(None)
-                if move_cell:
-                    print('First Move: ', end='')
-                    
-        if not move_cell:
-            print('AI finished playing')
-            return
-                
+        move_text = None
+        move_cell = None
+        
+        # place flag
         for mine in self.mines:
             if not mine.is_mine_candidate:
                 mine.right_click_actions(None)
-        
+                print(f'Place flag: ({mine.x}, {mine.y})')
+                return
+            
+        # first move
+        move_cell, move_text = self.make_first_move()
+        # save move
+        if not move_cell:
+            move_cell, move_text = self.make_safe_move()
+        # random move
+        if not move_cell:
+            move_cell, move_text = self.make_random_move()
+        # finished the game
+        if not move_cell or move_cell.is_mine or self.finish:
+            self.stop()
+            self.finish = True
+            if move_cell and move_cell.is_mine:
+                print(f"{move_text}({move_cell.x}, {move_cell.y})")
+                move_cell.left_click_actions(None)
+            print('AI finished playing')
+            return
+
         # using breadth first search to add knowledge
         self.add_knowledge(move_cell)
         if move_cell.surrounded_mines_count == 0:
@@ -190,11 +212,25 @@ class AI:
         # print(f'Safe cell: {self.safes}')
         # print(f"Move made: {self.moves_made}")
         # print(f'Safe move: {self.safe_move}')
-        print(f"({move_cell.x}, {move_cell.y})")
         # print("---------------------------------------------------------------")
-        
+        print(f"{move_text}({move_cell.x}, {move_cell.y})")
         # do left click actions
         move_cell.left_click_actions(None)
+    
+    # start AI loop
+    def start(self):
+        self.loop = True
+        self.move_loop()
+    
+    # stop AI loop
+    def stop(self):
+        self.loop = False
+        
+    # main loop
+    def move_loop(self):
+        while self.loop:
+            self.game.after(10, self.make_move(None))
+            self.game.update()
         
     def printAI(self):
         for sentence in self.knowledge:
