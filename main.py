@@ -38,15 +38,15 @@ hint = Button(
 hint.bind('<Button-1>', Cell.random_safe_cell)
 hint.place(x=50, y=27)
 
-minesweeperAI = computer.AI()
+minesweeperAI = computer.AI(root)
 
 ai_move = Button(
     top_frame,
     text='AI move',
     width=7,
     height=1,
+    command=lambda: utilities.toggle(minesweeperAI)
 )
-ai_move.bind('<Button-1>', minesweeperAI.make_move)
 ai_move.place(x=600,y=27)
 
 for x in range(settings.GRID_SIZE):
