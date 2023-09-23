@@ -152,7 +152,7 @@ class Cell:
             bg='#4d4d4d',
             fg='white',
             font=('', 20),
-            text = f'Cells left: {Cell.mine_count}'
+            text = f'Mines left: {Cell.mine_count}'
         )
         Cell.mine_label_object = label
     
